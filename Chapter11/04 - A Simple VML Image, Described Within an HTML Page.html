@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <title>SVG Demo</title>
+
+        <!-- The use VML within your page, use the <style> element to switch on
+             its behavior -->
+        <style>v\: * {behavior:url(#default#VML); display: inline-block;}</style>
+
+        <!-- Next, declare the VML namespace to go with the behavior -->
+        <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
+    </head>
+    <body>
+        <h1>SVG Demo</h1>
+        <v:rect style='position: absolute; top: 20px; left: 20px; width: 200px;height: 200px' fillcolor="#000000">
+            <v:fill method="linear sigma" color2="#cccccc" angle="90" type="gradient" />
+        </v:rect>   
+
+        <v:oval style="top: 120px; left: 350px; width: 50px; height: 50px;" 
+            fillcolor="#003300" strokecolor="#336699" strokeweight="25px" />
+
+        <v:line from="20px,20px" to="320px,320px" strokecolor="#cccccc" strokewidth="3px" />
+
+        <!-- VML text cannot be written directly onto the page, it must be  
+             encompassed by another shape. Here, we create a rectangle to
+             hold the text -->
+        <v:rect style="top=460px; left=200px; width=500; height=100">
+            <v:textbox ><span style="font-size: 50px; font-weight: bold; color: #333333;">Text Example</span></v:textbox>
+        </v:rect>
+    </body>
+</html>

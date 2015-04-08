@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <head> 
+        <meta  http-equiv="Content-Type" content="text/html;  charset=utf-8" /> 
+        <title>Rich text example</title> 
+    </head>
+	
+    <body> 
+        <h1>Rich text example</h1> 
+        <form method="post" action="/" id="form"> 
+            <div> 
+			
+                 <!-- Create a <textarea> field we will replace with the rich text 
+                     editor later through JavaScript --> 
+                <textarea id="freetext" name="freetext"></textarea> 
+				
+                <input type="submit" value="Save" /> 
+            </div> 
+        </form> 
+		
+         <!-- Include the TinyMCE control JavaScript file at the file path it 
+             installs itself by default --> 
+        <script type="text/javascript" src="tinymce/jscripts/tiny_mce/tiny_mce.js"></script> 
+		
+         <!-- The folllowing script would ideally be within an external file in a 
+             real web application .It is included in page for simplicity --> 
+        <script type="text/javascript"> 
+		
+            // Instruct TinyMCE to replace all <textarea> tags on the page with the 
+            // rich text editor control, using the default advanced theme button 
+            // set, which contains buttons for virtually all functionality provided 
+            // by the component . These include bold, italic, underline and 
+            // strikethrough text styles; image, hyperlink, table and list support; 
+            // and support for multiple levels of undo and redo in case the 
+            // user makes a mistake 
+            tinyMCE.init({ 
+                mode : "textareas", 
+                theme : "advanced" 
+            });
+			
+			// If you only wish to replace single <textarea> instances on the page, 
+            // rather than all, the following code allows you to select the exact. 
+            // elements to replace by their id attributes The simple button set 
+            // theme contains controls for simple text editing and multiple levels 
+            // of undo, rather than the overwhelming selection of buttons in the 
+            // advanced theme 
+            // 
+            // tinyMCE.init({ 
+            //     mode : "exact", 
+            //     elements: "freetext", 
+            //     theme : "simple" 
+            // }); 
+        </script> 
+    </body> 
+</html> 

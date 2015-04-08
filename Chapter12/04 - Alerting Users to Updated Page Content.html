@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Focusing on updated content </title>
+    </head>
+    <body>
+        <h1>Focusing on updated content</h1>
+
+        <!-- Create a form to submit to the server via Ajax -->
+        <form id="form" method="post" action="/form-result.html">
+            <fieldset>
+                <legend>Personal details</legend>
+
+                <div class="field">
+                    <label for="full-name">Full name</label>
+                    <input type="text" name="full-name" id="full-name" />
+                </div>
+
+                <input type="submit" value="Save" />
+            </fieldset>
+        </form>
+
+        <!-- Create an empty element to be populated with the response of the form 
+             submission from the server -->
+        <div id="result">
+        </div>
+
+        <!-- Include the $ JavaScript library -->
+        <script type="text/javascript" src="$.js"></script>
+
+        <!-- Reference the following code externally from within your own web 
+             applications - it is included within the page here for simplicity -->
+        <script type="text/javascript">
+            $.onDomReady(function() {
+
+                // Store references to the form and result element for use later
+                var result = document.getElementById("result");
+                var form = document.getElementById("form");
+
+                // When the form is submitted, send the details via Ajax, place the 
+                // response into the <div id="result"> element and bring focus
+                // to this element
+                $.Events.add(form, "submit", function(e) {
+                    e.preventDefault();
+
+                    // Send the form details to the server via Ajax
+                    $.Remote.save({
+                        url: document.getElementById("form").action,
+                        data: "full-name=" + document.getElementById("full-name").value,
+                        callback: function(response) {
+
+                            // Place the HTML response from the server into the
+                            // <div id="result"> page element
+                            result.innerHTML = response.text;
+
+                            // Set the tabIndex property to make the element focusable
+                            result.setAttribute("tabIndex", 0);
+
+                            // Focus on the <div id="result"> page element, which now contains 
+                            // the response from the server
+                            result.focus();
+
+                            // Remove the tabIndex property to prevent any further disruption 
+                            // to the natural focus order of the page
+                            result.removeAttribute("tabIndex");
+
+                            //  Remove the <form> element from the page now the results have 
+                            // been returned
+                            form.parentNode.removeChild(form);
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

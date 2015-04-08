@@ -1,0 +1,13 @@
+HTTP/1.x 200 OK 
+Cache-Control: private,  
+max-age=0 
+Date: Fri, 27 Mar 2009 12:42:14 GMT 
+Expires: -1 
+Content-Type: text/html;  
+charset=UTF-8 
+Content-Encoding: gzip 
+Server: gws 
+Content-Length: 2520 
+<html><head> 
+... rest of HTML for Google’s home page ... 
+</body></html> 

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <head> 
+        <meta  http-equiv="Content-Type" content="text/html;  charset=utf-8" /> 
+        <title>Offline email message storage example</title> 
+    </head> 
+    
+    <body> 
+        <h1>Offline email message storage example</h1> 
+		
+         <!-- Create a form for composing the email message --> 
+        <form method="post" action="/"  id="compose-message"> 
+            <div> 
+                <label for="to">To</label> 
+                <input type="text" name="to" id="to" /> 
+            </div> 
+            
+            <div> 
+                <label for="subject">Subject</label> 
+                <input type="text" name="subject" id="subject" /> 
+            </div> 
+            
+			<div> 
+                <label for="message-body">Message</label> 
+                <textarea id="message-body" name="message-body" rows="10" cols="20"></textarea> 
+            </div> 
+            
+            <div> 
+                <input type="submit" value="Save" /> 
+            </div> 
+        </form> 
+		
+         <!-- Create an element to use to place the Flash storage component later  --> 
+        <div  id="flash-storage-element"></div> 
+		
+         <!-- Reference the $ JavaScript library  --> 
+        <script type="text/javascript" src="$.js"></script> 
+		
+         <!-- Reference SWFObject from Google's CDN  --> 
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script> 
+		
+         <!-- The following code is included inline for simplicity. In a real web 
+        application, it should be stored in an external file  --> 
+        <script type="text/javascript"> 
+            $.onDomReady(function() { 
+			
+                // Find this Flash offline storage component online at 
+                // http://www.denodell.com/ 
+                var movieURL = "storage.swf"; 
+                var tagIDToReplace =  "flash-storage-element"; 
+                var width = 1; 
+                var height = 1; 
+                var flashVersionRequired = "8"; 
+                var parameters = { 
+                    allowScriptAccess: "always" 
+                }; 
+                var attributes = { 
+                    id: "flash-storage" 
+                }; 
+                swfobject.embedSWF(movieURL, tagIDToReplace, width, height, flashVersionRequired, null, {}, parameters, attributes); 
+				
+				// Initialize our offline data storage API, passing it a reference 
+                // to the Flash element on the page to allow storage using Flash 
+                 $.Storage.initialize(document.getElementById("flash-storage")); 
+ 
+               // Populate the message fields with the last saved values so that 
+               // when the user returns to the page after a browser crash, 
+               // the fields are prepopulated with the last saved values 
+               // automatically for them 
+                $.Storage.get("to", function(value) { 
+                    document.getElementById("to").value = value; 
+                }); 
+				
+                $.Storage.get("subject", function(value) { 
+                    document.getElementById("subject").value = value; 
+                }); 
+				
+                 $.Storage.get("message-body", function(value) { 
+                     document.getElementById("message-body").value = value; 
+                }); 
+				
+                // Save the contents of the message being composed 
+                // once every 30 seconds 
+                var THIRTY_SECONDS = 30000; // 30 seconds = 30000 milliseconds 
+                
+                var saveMessage = window.setInterval(function() { 
+                    
+                    // Save the values of the To, Subject, and Message Body fields 
+                    // in case of network drop or browser crash 
+                    $.Storage.set({ 
+                        name: "to", 
+                        value: document.getElementById("to").value 
+                    }); 
+                    $.Storage.set({ 
+                        name: "subject", 
+                        value: document.getElementById("subject").value 
+                    }); 
+                    $.Storage.set({ 
+                        name: "message-body", 
+                        value: document.getElementById("message-body").value 
+                    }); 
+                }, THIRTY_SECONDS); 
+                 
+                // When the user submits the form to save the message to the server, 
+                // remove the previously stored field values and stop them from 
+                // being saved again while the form is being submitted 
+                 $.Events.add(document.getElementById("compose-message"), "submit", function(e) {
+					
+					// Stop the HTML page from submitting the form so we can 
+                    // handle the data submission via Ajax instead 
+                    e.preventDefault(); 
+                    
+                    // Stop saving the message field values every 30 seconds 
+                    window.clearInterval(saveMessage); 
+                    
+                    // TODO: send form field values to the server using Ajax 
+					
+                    // Remove the local data now the message has been sent 
+                    $.Storage.remove("to"); 
+                    $.Storage.remove("subject"); 
+                    $.Storage.remove("message-body"); 
+					
+                    // TODO: change the page to display the mailbox folder contents 
+                }); 
+            }); 
+        </script> 
+    </body> 
+</html> 

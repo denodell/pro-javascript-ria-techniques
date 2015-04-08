@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>ARIA Ajax example</title>
+    </head>
+
+    <body role="application">
+        <div id="header" role="banner">
+            <h1>ARIA Ajax example</h1>
+        </div>
+ 
+        <ul id="navigation" role="navigation">
+            <li><a href="/page1.html">Page 1</a></li>
+            <li><a href="/page2.html">Page 2</a></li>
+            <li><a href="/page3.html">Page 3</a></li>
+        </ul>
+
+        <!-- Mark the following element as being a live region using the aria-live 
+             attribute. The polite value means that the user won’t be hounded by a 
+             notification that the content has updated until they have completed their 
+             current activity. The aria-atomic attribute value of true means that the user  
+             will be notified of the updated contents of the entire live region and not just 
+             a specific part of that region that changed. The aria-busy attribute will be 
+             set to true when the live region is being updated, resetting to false when 
+             there are no updates being made at that time -->
+        <div id="live-region" aria-live="polite" aria-atomic="true" aria-busy="false">
+            <h2>Default page content</h2>
+            <p>Clicking on the navigation links will cause this content to change 
+            dynamically if JavaScript is enabled. The ARIA attributes ensure that screen 
+            readers and other assistive technology will be informed of the changes.</p>
+        </div>
+
+        <!-- Include the $ JavaScript library -->
+        <script type="text/javascript" src="$.js"></script>
+
+        <!-- You should move the following script to an external file within a real web 
+             application. It is included on the page here for simplicity -->
+        <script type="text/javascript">
+            $.onDomReady(function() {
+
+               // Locate the live region page element and store a reference to it
+                var liveRegion = document.getElementById("live-region");
+
+                // Listen for click events firing within the navigation list
+                $.Events.add(document.getElementById("navigation"), "click", function(e) {
+                    if (e.target.tagName.toLowerCase() == "a") {
+
+                        // If the user selected a navigation link, cancel its default action
+                        e.preventDefault();
+
+                        // Inform the browser or any assistive technology being used that the 
+                        // live region is now being updated
+                        liveRegion.setAttribute("aria-busy", "true");
+
+                        // Begin loading the contents of the page specified by the link URL
+                        $.Remote.load({
+                            url: e.target.href,
+                            callback: function(response) {
+
+                                // When the content has loaded, replace the HTML within the live 
+                                // region with the new HTML content loaded from the server
+                                liveRegion.innerHTML = response.text; 
+
+                                // Inform the browser that the live region has finished
+                                // being updated
+                                liveRegion.setAttribute("aria-busy", "false");
+
+                                // Users of assistive technology will be informed of the content 
+                                // update at the next available opportunity after they have 
+                                // completed their current action
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

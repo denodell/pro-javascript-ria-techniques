@@ -1,0 +1,16 @@
+<div id="menu"></div> 
+<script type="text/javascript"> 
+    $.Events.add(document.body, "click", function(e) { 
+        // If the user clicks on an element with an id of menu 
+        if (e.target.id == "menu") { 
+            // Toggle the menu-highlight class on that element. That class is 
+            // specified within the style sheet file to have a different design 
+			
+            if  ($.CSS.hasClass("menu-highlight")) { 
+                 $.CSS.removeClass("menu-highlight");
+            } else { 
+                 $.CSS.addClass("menu-highlight"); 
+            } 
+        }; 
+    }); 
+</script> 

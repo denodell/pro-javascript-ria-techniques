@@ -1,0 +1,20 @@
+a:link { 
+    /* Applied to unvisited links */
+} 
+
+a:visited { 
+    /* Applied to visited links */
+} 
+
+a:hover { 
+    /* Applied to the link currently underneath the mouse pointer */
+} 
+
+a:focus { 
+    /* Applied to the link currently selected via the keyboard */
+    /* e.g., when using the tab key to cycle through links on the page */
+} 
+
+a:active { 
+    /* Applied to the link for a brief period while it is being selected */
+} 

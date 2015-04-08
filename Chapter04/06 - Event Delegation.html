@@ -1,0 +1,14 @@
+<a href="/">Back to home</a> 
+
+<script type="text/javascript"> 
+    // Listen for click events firing within the whole document 
+    $.Events.add(document.body, "click", function(e) { 
+        // e.target contains a reference to the actual element the 
+        // event took place on 
+        if (e.target.tagName.toLowerCase() == "a") { 
+            alert("You clicked the anchor tag"); 
+        } else { 
+            alert("You clicked somewhere other than on the anchor tag"); 
+        } 
+    }); 
+</script> 

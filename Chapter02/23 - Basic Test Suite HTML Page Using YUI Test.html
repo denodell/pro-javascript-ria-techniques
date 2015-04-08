@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+    <head> 
+        <meta  http-equiv="Content-Type" content="text/html;  charset=utf-8" /> 
+        <title>Test suite example with YUI Test</title> 
+		
+         <!-- Include Yahoo! CSS and JS for the Test framework  --> 
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/logger/assets/skins/sam/logger.css" /> 
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/fonts/fonts-min.css" /> 
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/yuitest/assets/skins/sam/yuitest.css" /> 
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/logger/logger-min.js"></script>
+		<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yuitest/yuitest-min.js"></script> 
+    </head> 
+    <body> 
+        <h1>Test suite example with YUI Test</h1> 
+        <div  id="testLogger"><!-- The logging console will go here  --></div> 
+		
+        <script type="text/javascript"> 
+            // This will be the function we will write our test cases for 
+            var squareAndRound = function(number) { 
+                return Math.round(number * number); 
+            } 
+           // Now, create the test case code 
+            YAHOO.namespace("example.yuitest"); 
+			
+            // Create a new test case 
+            YAHOO.example.yuitest.MyTestCase = new YAHOO.tool.TestCase({ 
+                name: "My test case", // Give a name to label the test case with 
+                
+                // All test case functions must begin with the test prefix 
+                testTen: function() { 
+                    var Assert = YAHOO.util.Assert; // Allows you to test the value 
+                    
+                    // Execute the function we're testing 
+                    var result = squareAndRound(10); 
+					
+                    // Assert that you expect the result of the function to be 100. 
+                    // If it is, the test passes, if not an error is logged 
+                    Assert.areEqual(100, result); 
+                } 
+				
+                // Insert a multitude of other test cases here to push the 
+                // function to the limit 
+            }); 
+			
+            // Create a new test suite and add the test case to it 
+            YAHOO.example.yuitest.ExampleSuite = new YAHOO.tool.TestSuite("Example Suite"); 
+            YAHOO.example.yuitest.ExampleSuite.add(YAHOO.example.yuitest.MyTestCase); 
+			
+            // When the DOM is ready... 
+            YAHOO.util.Event.onDOMReady(function (){ 
+                // Create the logging console on the page 
+                var logger = new YAHOO.tool.TestLogger("testLogger");
+				
+				// Add the test suite to the test runner's list of tasks 
+                YAHOO.tool.TestRunner.add(YAHOO.example.yuitest.ExampleSuite); 
+				
+                // Run the test runner, which executes the tests and outputs the 
+                // results in the logging console 
+                YAHOO.tool.TestRunner.run(); 
+            }); 
+        </script> 
+    </body> 
+</html> 

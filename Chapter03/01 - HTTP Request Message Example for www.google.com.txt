@@ -1,0 +1,10 @@
+GET / HTTP/1.1 
+Host: www.google.com 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1;  en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3 (.NET CLR 3.5.30729) 
+Accept: text/html,application/xhtml+xml,application/xml; 
+Accept-Language:  en-gb,en; 
+Accept-Encoding: gzip,deflate 
+Accept-Charset:  ISO-8859-1,utf-8; 
+Keep-Alive: 300 
+Connection:  keep-alive 
+Cookie: PREF=ID=64637ffc707d92f4:TM=1222191214:LM=... 

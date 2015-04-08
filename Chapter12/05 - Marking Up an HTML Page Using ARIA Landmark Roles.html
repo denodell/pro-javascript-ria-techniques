@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>ARIA page example</title>
+    </head>
+
+    <!-- The application role denotes a part of the page which acts as a standalone 
+         RIA - in this case, the entire page is going to represent an RIA so we place the 
+         role on the <body> tag -->
+    <body role="application">
+
+        <!-- The header element of the page, containing page title, logos and another 
+             other general site information is marked with the banner role to denote this 
+             function -->
+        <div id="header" role="banner">
+            <h1>ARIA page example</h1>
+
+            <!-- A site-wide search functionality should be marked up with the search 
+                 landmark role -->
+            <form method="post" action="/search/" role="search">
+                <label for="query">Search query</label>
+                <input type="text" name="query" id="query" />
+                <input type="submit" value="Search" />
+            </form>
+        </div>
+
+        <!-- Navigational lists are marked with the navigation role -->
+        <ul id="navigation" role="navigation">
+            <li><a href="/news/">News</a></li>
+            <!-- Other navigation links go here -->
+        </ul>
+ 
+        <!-- The main part of the page is denoted with the main role -->
+        <div id="main" role="main">
+            <p>The main part of the document goes here.</p>
+        </div>
+
+        <!-- Secondary. sideline or complentary content, which would make sense 
+             when read out of the context of the rest of the page, is marked with the 
+             complementary role -->
+        <div id="aside" role="complementary">
+            <p>Secondary or related information goes here.</p>
+        </div>
+    </body>
+</html>

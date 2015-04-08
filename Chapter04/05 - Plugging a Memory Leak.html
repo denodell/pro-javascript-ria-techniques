@@ -1,0 +1,11 @@
+<div id="leaking"></div>
+
+<script type="text/javascript"> 
+    var leakyDiv = document.getElementById('leaking'); 
+    document.getElementById('leaking').newProperty = leakyDiv; 
+	
+    $.Events.add(window, "unload", function() { 
+        // Remove all circular references before page is unloaded to plug the leak 
+        document.getElementById('leaking').newProperty = null; 
+    }); 
+</script> 

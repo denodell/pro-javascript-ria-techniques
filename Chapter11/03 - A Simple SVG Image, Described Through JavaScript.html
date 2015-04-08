@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <title>SVG Demo</title>
+    </head>
+    <body>
+        <h1>SVG Demo</h1>
+
+        <!-- Including script block on the page to demonstrate - 
+             this would normally exist in a separate JavaScript file -->
+        <script type="text/javascript">
+
+            // document.createElementNS creates a new element using a defined 
+            // namespace - in this case is the SVG namespace, referred to by the URL. 
+            // The tag created is <svg> according to the second parameter. Because 
+            // namespaces are a part of XHTML and XML, the element is rendered using 
+            // the browser’s XML parser - just what we need to represent SVG 
+            // on our page
+
+            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '1024');
+            svg.setAttribute('height', '768');
+
+            // Dynamically create a <circle> element and add it to the previously 
+            // created <svg> canvas
+            var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', '350');
+            circle.setAttribute('cy', '120');
+            circle.setAttribute('r', '50');
+            circle.setAttribute('stroke', '#336699');
+            circle.setAttribute('stroke-width', '25');
+            circle.setAttribute('fill', '#003300');
+            svg.appendChild(circle);
+
+            // TODO: Represent all other vector elements here in a similar way
+
+            // Add the <svg> tag to the page, rendering the image
+            document.body.appendChild(svg);
+        </script>
+    </body>
+</html>

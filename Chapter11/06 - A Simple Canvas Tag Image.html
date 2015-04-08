@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+    <head>
+        <title>Canvas demo</title>
+    </head>
+    <body>
+        <h1>Canvas demo</h1>
+
+        <!-- The canvas tag takes optional width and height attributes. If these are left 
+             out, the canvas size is usually 300 pixels wide by 150 pixels high -->
+        <canvas id="canvas" width="300" height="300"></canvas>
+
+        <!-- The following script is included here for simplicitiy - you should reference 
+             the code from a separate file, ideally -->
+        <script type="text/javascript">
+            
+            // Get a DOM reference to the <canvas> tag
+            var canvas = document.getElementById("canvas");
+
+            // The actual drawing surface within the <canvas> tag is known as a 
+            // rendering context. The drawing methods are associated with the context 
+            // so we must first get a reference to this context. At present, the <canvas> 
+            // tag supports only a 2-dimensional shape rendering context. In future, it is 
+            // envisioned that 3-dimensional shape rendering will be possible.
+            var context = canvas.getContext("2d");
+
+            // Define a gradient, fading from #000000 to #cccccc horizontally across the 
+            // space of 200 pixels
+            var gradient = context.createLinearGradient(0, 0, 200, 0);
+            gradient.addColorStop(0, "#000000");
+            gradient.addColorStop(1, "#cccccc");
+
+            // To use the gradient within a rectangle, we define the gradient as the 
+            // current fill style and then execute the fillRect method
+            context.fillStyle = gradient;
+
+            // Draw the gradient-filled rectangle from position (20, 20) stretching 200 
+            // pixels wide and tall from that point
+            context.fillRect(20, 20, 200, 200);
+        </script>
+    </body>
+</html>

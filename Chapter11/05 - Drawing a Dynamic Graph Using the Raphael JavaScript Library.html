@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <title>Dynamic graph</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    </head>
+    <body>
+        <h1>Dynamic graph</h1>
+
+        <!-- Element we’ll populate with a button later via JavaScript -->
+        <p id="button"></p>
+
+        <!-- Element we’ll populate with the graph later using JavaScript -->
+        <div id="canvas"></div>
+
+        <!-- Reference the $ JavaScript library -->
+        <script type="text/javascript" src="$.js"></script>
+
+        <!-- Reference the Raphaël JavaScript library -->
+        <script type="text/javascript" src="raphael.js"></script>
+
+        <!-- For simplicity, I include the JavaScript code to generate the graph within 
+             the page - you should reference it from an external file within your own 
+             web applications -->
+        <script type="text/javascript">
+
+            // Declare a new constructor which will draw and represent our graph
+            var Graph = function(input) {
+
+                // Expected inputs include the data labels for the x-axis as an array, the 
+                // data values themselves as an array, the width and height of the canvas 
+                // and the element itself to populate with the canvas
+                this.labels = input.labels || [];
+                this.data = input.data || [];
+                this.width = input.width || 600;
+                this.height = input.height || 300;
+                this.element = input.element || $.Elements.create("div");
+                
+                // Create a new cross-browser canvas using Raphaël. The paper property 
+                // represents an object which we can execute methods on later to alter
+				// and affect the new canvas
+                this.paper = Raphael(this.element, this.width, this.height);
+
+                // Establish the maximum value from the data array, rounded to the 
+                // nearest 100 - this value will be used as the maximum point on the y-
+                // axis of the graph
+                this.maximumDataValue = Math.ceil(Math.max.apply(Math, this.data) / 100) * 100;
+                
+                // The buildGrid method draws the grid onto the canvas, including the 
+                // axis labels and returns the x and y coordinates of the position of the 
+                // actual grid (assuming spacing for the labels) and the width and height 
+                // of the grid itself - not counting the labels
+                this.buildGrid = function() {
+
+                    // Define the height and width to allocate to the axis labels
+                    var xLabelHeight = 20, yLabelWidth = 20;
+
+                    // Establish the x and y coordinates of the grid itself, and the width and 
+                    // height of the grid, not counting the axis labels
+                    var x = yLabelWidth, y = 20;
+                    var width = this.width - yLabelWidth;
+                    var height = this.height - xLabelHeight - y;
+
+                    // Calculate how many lines to draw in each direction on the grid
+                    var horizLines = this.data.length * 2;
+                    var vertLines = (this.maximumDataValue / 10);
+                    
+                    // Draw the grid itself in light gray (hex color #ccc) using Raphaël
+                    this.paper.drawGrid(x, y, width, height, horizLines, vertLines, "#ccc");
+
+                    // The drawXLabels function creates and positions the labels on the 
+                    // x-axis of the graph                    
+                    var drawXLabels = function() {
+                        for (var index = 0, length = this.data.length; index < length; index++) {
+                            var x = yLabelWidth + ((index / this.data.length) * width) + (width/(2 * this.data.length));
+                            var y = this.height - (xLabelHeight/2);
+
+                            // Use Raphaël to draw the label text onto the canvas
+                            this.paper.text(x, y, this.labels[index]).attr({
+								"font": '10px "Arial"',
+                                stroke: "none",
+                                fill: "#000"
+                            });
+                        }
+                    }.call(this);
+                    
+                    // The drawYLabels function creates and positions the labels on the y-
+                    // axis based on the maximum data value we calculated earlier and 
+                    // rounded to the nearest 100 - this allows us to use nice rounded 
+                    // numbers as our axis labels
+                    var drawYLabels = function() {
+                        for (var index = 0, length = vertLines; index <= length; index++) {
+                            var labelText = (index * this.maximumDataValue) / vertLines;
+                            var labelPosition = height - (vertLines * index * height / this.maximumDataValue) + y;
+
+                            // Use Raphaël to draw the label text onto the canvas
+                            this.paper.text(yLabelWidth / 2, labelPosition, labelText).attr({
+                                "font": '10px "Arial"',
+                                stroke: "none",
+                                fill: "#000"
+                            });
+                        }                        
+                    }.call(this);
+                    
+                    // Now return the x and y coordinates of the start of the grid within the 
+                    // canvas along with the width and height of the grid itself
+                    return {
+                        x: x,
+                        y: y,
+                        width: width,
+                        height: height
+                    }
+                }
+                
+                // Execute the buildGrid method, storing the returned values in the 
+                // grid property
+                this.grid = this.buildGrid();
+        
+                // The drawPath method plots the points and draws the lines onto
+				// the existing grid
+                this.drawPath = function() {
+
+                    // To draw a line using Raphaël, you create a path and give that path a 
+                    // stroke-width value equivalent to the width you wish the line to be
+                    var pathAttributes = {
+                        stroke: "#333",
+                        "stroke-width": 4,
+                        "stroke-linejoin": "round"
+                    };
+                    this.path = this.paper.path(pathAttributes);
+
+                    // Create arrays for storing references to the points, text and shapes 
+                    // we’re going to be drawing onto the grid
+                    this.points = [];
+                    this.text = [];
+                    this.rects = [];
+                    
+                    // Loop through each item in the data array
+                    for (var index = 0, length = this.data.length; index < length; index++) {
+
+                        // Calculate the x and y coordinate position of the point on the grid 
+                        // which will represent the current data item
+                        var x = this.grid.x + (index * (this.grid.width / this.data.length)) + (this.grid.width / (2 * this.data.length));
+                        var y = this.grid.y + this.grid.height - (this.data[index] * this.grid.height / this.maximumDataValue);
+
+                        // The first data item will be represented by a point and will not have 
+                        // a line drawn to its position. All other data items will have lines
+                        // drawn to them
+                        if (index == 0) {
+                            this.path.moveTo(x, y, 10);
+                        } else {
+                            this.path.lineTo(x, y, 10);
+                        }
+                        
+                        // The drawPoints function renders points onto the grid, along with a 
+                        // text label above each point which is hidden until the user hovers 
+                        // their mouse over an invisible rectangle covering the point and a 
+                        // large area around it. This provides a larger area for the mouse 
+						// interaction to take place on, avoiding the need for the user to locate 
+                        // the smaller points on the grid in order to see the text label 
+                        // associated with that point
+                        var drawPoints = function(){
+
+                            // Draw an invisible rectangle from the top to bottom of the grid 
+                            // surrounding the point representing the data value. The opacity 
+                            // value of 0 makes the rectangle invisible but still present on 
+                            // the grid
+                            var rect = this.paper.rect(this.grid.x + (this.grid.width * index / this.data.length), this.grid.y, (this.grid.width * (index + 1) / this.data.length), this.grid.height).attr({stroke: "none", fill: "#fff", opacity: 0});
+
+                            // Add the object representing the rectangle shape to an array
+                            this.rects.push(rect);
+
+                            // Draw a point representing the data value onto the grid and add it 
+                            // to an array of all the points
+                            var point = this.paper.circle(x, y, 5).attr({
+                                'fill': "#333"
+                            });
+                            this.points.push(point);
+
+                            // Draw a text label above the point and add it to an array of labels
+                            var text = this.paper.text(x, y - 15, this.data[index]).attr({
+                                "font": '10px "Arial"',
+                                stroke: "none",
+                                fill: "#000"
+                            });
+                            this.text.push(text);
+
+                            // Because the XML elements that represent each shape or object 
+                            // within the canvas are able to be manipulated using the standard 
+                            // DOM, we can use DOM methods, such as insertAfter, just as with                     
+                            // HTML elements.
+                            text.insertAfter(point);
+
+                            // Hide the text label by default
+                            text.hide();
+							
+							// We can add events to the elements created on the canvas since 
+                            // they behave like standard HTML elements. Here, we use Raphaël 
+                            // to dynamically alter the color and size of the point created 
+                            // earlier, and show the text label, when the user moves their 
+                            // mouse over the invisible rectangle element surrounding
+                            // the point.
+                            rect.mouseover(function(){
+                                point.attr({
+                                    "fill": "#999",
+                                    "r": 7
+                                });
+                                text.show();
+                            });
+
+                            // When the user moves the mouse away from the rectangle 
+                            // surrounding the point, the text is hidden once again and the point 
+                            // is restored to its original size and color.
+                            rect.mouseout(function(){
+                                point.attr({
+                                    "fill": "#333",
+                                    "r": 5
+                                });
+                                text.hide();
+                            });
+                        }.call(this)
+                    }
+                }
+
+                // Now execute the drawPath method just described
+                this.drawPath();
+                
+                // The replaceData method will be used to remove the vectors from the 
+                // grid, leaving the grid intact, so that new data can be plotted on it.
+                this.replaceData = function(data) {
+
+                    // The new data is passed as an input to the method and the existing 
+                    // data is replaced with that new data
+                    this.data = data;
+
+                    // Remove the line from the grid
+                    this.path.remove();
+					
+					// Remove the points from the grid, one by one
+                    for (var index = 0, length = this.points.length; index < length; index++) {
+                        this.points[index].remove();
+                    }
+
+                    // Remove the text labels from the grid
+                    for (var index = 0, length = this.text.length; index < length; index++) {
+                        this.text[index].remove();
+                    }
+
+                    // Remove the invisible rectangle shapes from the grid
+                    for (var index = 0, length = this.rects.length; index < length; index++) {
+                        this.rects[index].remove();
+                    }
+
+                    // Execute the drawPath method, which will once again draw the line, 
+                    // points and text labels onto the grid - this time using the new data
+                    this.drawPath();
+                }
+            }
+
+            // Instantiate the Graph constructor, passing in the data, labels and DOM 
+            // element to place the new graph within
+            var myGraph = new Graph({
+                labels: [2004, 2005, 2006, 2007, 2008, 2009],
+                data: [0, 47, 32, 100, 78, 89],
+                element: document.getElementById("canvas")
+            });
+
+            // Place a ‘Get new data’ button onto the page which, when clicked, will 
+            // generate a new set of data values at random. This is to simulate what 
+            // could be an Ajax call in a real-world RIA to fetch new, unknown data from 
+            // the server
+            var getNewData = $.Elements.create("a");
+            getNewData.innerHTML = "Get new data";
+            document.getElementById("button").appendChild(getNewData);
+
+            $.Events.add(getNewData, "click", function(e) {
+                e.preventDefault();
+				
+				// Generate a new set of data at random, each value being in the range
+                // from 0 to 100
+                var data = [];
+                for (var index = 0, length = 5; index < length; index++) {
+                    data.push(Math.round(Math.random() * 100));
+                }
+
+                // Execute the replaceData method of the Graph instance to render the 
+                // new set of data onto the grid
+                myGraph.replaceData(data);
+            });
+        </script>
+    </body>
+</html>

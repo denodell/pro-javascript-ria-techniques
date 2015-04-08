@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <head> 
+        <meta  http-equiv="Content-Type" content="text/html;  charset=utf-8" /> 
+        <title>Slider example</title> 
+		
+         <!-- Reference your own set of style rules for the slider control --> 
+        <link rel="stylesheet" href="slider.css" type="text/css" /> 
+    </head> 
+    <body> 
+        <h1>Slider example</h1> 
+        <form method="post" action="/"> 
+            <div  id="volume-control"> 
+                <label for="volume">Select volume level</label> 
+				
+                 <!-- Create the element to associate with the slider control --> 
+                <select name="volume" id="volume"> 
+                    <option value="0">Mute</option>
+					<option value="10">1</option> 
+                    <option value="20">2</option> 
+                    <option value="30" selected="selected">3</option> 
+                    <option value="40">4</option> 
+                    <option value="50">5</option> 
+                    <option value="60">6</option> 
+                    <option value="70">7</option> 
+                    <option value="80">8</option> 
+                    <option value="90">9</option> 
+                    <option value="100">Max</option> 
+                </select> 
+            </div> 
+			
+             <!-- Create an element to place the slider control within --> 
+            <div  id="volume-slider"></div> 
+            <div> 
+                <input type="submit" value="Save" /> 
+            </div> 
+        </form> 
+		
+         <!-- Include a reference to the $ JavaScript library --> 
+        <script type="text/javascript" src="$.js"></script> 
+		
+         <!-- Include a reference to the Slider component class --> 
+        <script type="text/javascript" src="slider.js"></script> 
+		
+         <!-- The following script adds the slider control to the page and associates 
+             it with the <select> box on the page. In a real web application, this 
+             code should be placed within an external file and referenced here 
+             instead. It is included here for simplicity --> 
+        <script type="text/javascript"> 
+            $.onDomReady(function() { 
+			
+                // Get a reference to the <select> box we wish to use as the basis 
+                // for the slider control 
+                var volumeSelectBox = document.getElementById("volume"); 
+				
+                // Create a new instance of our slider control, placing the element 
+                // within the appropriate tag on the page and using the option 
+                // values from the <select> element as the slider's data values, 
+                // setting the default position of the slider to the currently 
+                // selected value in the <select> box 
+                var slider = new Slider({ 
+                    destinationElement:  document.getElementById("volume-slider"), 
+                    values: (function() {
+						
+						// Create and return an array of data values taken from the 
+                        // options in the <select> box we are representing 
+                        // as a slider 
+                        var values = []; 
+                        for (var index = 0, length = volumeSelectBox.options.length; index < length; index++) { 
+                            values.push(volumeSelectBox.options[index].text); 
+                        } 
+                        return values; 
+                    })(), 
+                    selectedIndex: volumeSelectBox.options.selectedIndex 
+                }); 
+				
+                // Listen for the VALUE_CHANGED event to fire within the slider 
+                // instance, setting the selected option in the <select> box list to 
+                // match the newly selected value on the slider control. This allows 
+                // the value to be saved with the rest of the HTML form as the 
+                // slider value is represented within a real HTML form field element 
+                slider.listen(slider.eventType.VALUE_CHANGED, function(result) { 
+                    volumeSelectBox.options[result.index].selected = true; 
+                }); 
+				
+                // Listen for changes to the selected option within the <select> 
+                // box, updating the slider position when the user selects a new 
+                // value using the drop down list instead of the slider 
+                // control. This keeps both controls in sync with each other 
+                $.Events.add(volumeSelectBox, "change", function() { 
+                    slider.fire(slider.eventType.MOVE, volumeSelectBox.options.selectedIndex) 
+                }); 
+            }); 
+        </script> 
+    </body> 
+</html> 

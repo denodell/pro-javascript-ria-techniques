@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <head> 
+        <meta  http-equiv="Content-Type" content="text/html;  charset=utf-8" /> 
+        <title>Multiple file upload example</title> 
+        <link rel="stylesheet" href="upload.css" type="text/css" /> 
+    </head> 
+	
+    <body> 
+        <h1>Multiple file uploads example</h1> 
+		
+         <!-- Forms with file upload fields must use the multipart/form-data encoding 
+             type when sending the data to the server for processing  --> 
+        <form method="post" action="/" id="form" enctype="multipart/form-data"> 
+            <fieldset> 
+                <legend>Files to upload</legend> 
+				
+                <label for="make-multiple">Select files</label> 
+                 <!-- Include a real file upload control, in case JavaScript 
+                     is disabled  --> 
+					 
+                <input type="file"  id="make-multiple" /> 
+                 <!-- Create an element to hold the Browse button in the Flash 
+                     component. The button to launch the file selection dialog 
+                     using Flash must itself be in Flash. Adobe considers it 
+                     a security risk otherwise --> 
+                <span id="browse-button"></span>
+				
+				<!-- Create an element to reflect the current upload progress 
+                     back to the user  --> 
+                <div id="upload-progress"></div> 
+            </fieldset> 
+        </form> 
+		
+         <!-- Reference the $ JavaScript library --> 
+        <script type="text/javascript" src="$.js"></script> 
+		
+         <!-- Load the SWFObject API --> 
+        <script type="text/javascript" src="swfupload.js"></script> 
+		
+         <!-- Configure our page. This code block should be contained within 
+             an external file within a real web application. It is provided here 
+             for simplicity --> 
+        <script type="text/javascript"> 
+		
+            // Define the settings to initialize the SWFObject component with 
+            var settings = { 
+			
+                // Locate the Flash file that provides the upload functionality 
+                flash_url : "swfupload.swf", 
+				
+                // Specify the URL to upload the file to on the server - relative to 
+                // the location of the Flash file 
+                upload_url: "upload.php",
+				
+                // Show debug information in the browser - useful for development 
+                debug: true, 
+				
+                // Image file to use for the Browse button - relative to the 
+                // location of the Flash file 
+                button_image_url: "browse.png", 
+				
+                // Dimensions of the Browse button 
+                button_width: "85", 
+                button_height: "39", 
+				
+                // DOM element id to populate with the Browse button when 
+                // the component initializes 
+                button_placeholder_id:  "browse-button", 
+				
+                // The swfupload_loaded_handler method will be called when the 
+                // component has been initialized, if it has been supplied 
+                swfupload_loaded_handler: function() {
+				
+					// Add a class of hide to the existing file upload control. Use 
+                    // CSS to make the control invisible. Since the SWFUpload 
+                    // component has successfully initialized, we no longer 
+                    // need this control 
+                    $.CSS.addClass(document.getElementById("make-multiple"), "hide"); 
+                } 
+            }; 
+			
+            // The file_queued_handler method is called by the SWFUpload component 
+            // once a file has been selected in the file selection dialog, passing 
+            // in an object literal containing details about that file, including 
+            // its name, file size, and more. If multiple files are selected in the 
+            // dialog, this method is called multiple times, once for each file.
+            // Here, we create an array of files to act as a file queue for 
+            // uploading later 
+            var queue = []; 
+            settings.file_queued_handler = function(file) { 
+                queue.push(file); 
+            } 
+			
+            // The upload_progress_handler event is fired regularly on a fixed time 
+            // interval by the SWFUpload component, executing the following 
+            // method each time. It specifies which file is currently being 
+            // uploaded, the number of data bytes already sent to the server and the 
+            // total number of data bytes in the file. We use this to calculate the 
+            // percentage complete of the file upload and reflect this within the 
+            // HTML page while the file is being uploaded, giving our end users 
+            // feedback on the progress of their uploads 
+            settings.upload_progress_handler = function(file, bytesSent, bytesTotal) { 
+                var percentComplete = (bytesSent / bytesTotal) * 100; 
+                var text = "{fileName} ({percentComplete}% complete)"; 
+				
+                 document.getElementById("upload-progress").innerHTML = $.Utils.replaceText(text, { 
+                    fileName: file.name, 
+                    percentComplete: percentComplete 
+                }); 
+            } 
+			
+            // The upload_complete_handler event is fired when a file completes 
+            // uploading. We use this event to automatically begin upload of the 
+            // next file in the queue. Once the last file has been uploaded, we 
+            // submit the form on the page
+			var filesCompleted = 0; 
+            settings.upload_complete_handler = function() { 
+                filesCompleted++; 
+                if (filesCompleted < queue.length) { 
+                    this.startUpload(); // Process the next in the queue 
+                } else if (filesCompleted == queue.length) { 
+                    document.getElementById("form").submit() 
+                } 
+            } 
+			
+            // Now that the settings for the SWFUpload control have been configured, 
+            // let's put it to use on our page once the DOM is ready to be accessed 
+            $.onDomReady(function() { 
+			
+                // Apply the settings to the SWFUpload control and it's ready for 
+                // use on the page 
+                var uploader = new SWFUpload(settings); 
+				
+                // Listen for the form submission event on the page 
+                $.Events.add(document.getElementById("form"), "submit", function(e) {
+					
+                    // When the user attempts to submit the form, if there are files 
+                    // waiting in the queue to be uploaded, cancel the form 
+                    // submission and upload these files. The startUpload() method 
+                    // of SWFUpload does exactly that. It begins upload of the first 
+                    // file in the queue. The files then upload one by one until 
+                    // the final file has been sent, at which point the 
+                    // upload_complete_handler event fires and our method 
+                    // specified earlier submits the form to the server. If there 
+                    // are no files to be uploaded, the form will submit 
+                    // as normal here 
+                    if (queue.length > 0) { 
+                        e.preventDefault(); 
+                        uploader.startUpload(); 
+                    } 
+                }); 
+            }); 
+        </script> 
+    </body> 
+</html> 

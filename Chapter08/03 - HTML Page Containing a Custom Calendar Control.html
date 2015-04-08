@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <head> 
+        <meta  http-equiv="Content-Type" content="text/html;  charset=utf-8" /> 
+        <title>Calendar example</title> 
+         <!-- Define and reference your own style sheet file here --> 
+        <link rel="stylesheet" href="calendar.css" type="text/css" /> 
+    </head>
+	<body> 
+        <form method="post" action="/"> 
+            <div  id="select-boxes"> 
+                <select name="day" id="day"> 
+                    <option value="1">1</option> 
+                     <!-- Fill in the missing option values here --> 
+                    <option value="31">31</option> 
+                </select> 
+				
+                <select name="month" id="month"> 
+                    <option value="0">January</option> 
+                     <!-- Fill in the missing option values here --> 
+                    <option value="11">December</option> 
+                </select> 
+				
+                <select name="year" id="year"> 
+                    <option value="2000">2000</option> 
+                     <!-- Fill in the missing option values here --> 
+                    <option value="2009">2009</option> 
+                </select> 
+            </div> 
+			
+            <div id="calendar"></div> 
+            <div> 
+               <input type="submit" value="Save" /> 
+            </div> 
+        </form> 
+		
+         <!-- Reference the $ JavaScript library, complete with the additions 
+             we made earlier --> 
+        <script type="text/javascript" src="$.js"></script> 
+		
+         <!-- Reference the file containing our calendar control constructor  --> 
+        <script type="text/javascript" src="calendar.js"></script> 
+		
+         <!-- The code to place the calendar onto the page and connect it to the 
+             existing HTML controls. You should place this within an external file 
+             in a real web application instead of in page --> 
+        <script type="text/javascript"> 
+            $.onDomReady(function() { 
+			
+                // Get references to the three <select> boxes representing the 
+                // selected date 
+                var dayField = document.getElementById('day'); 
+                var monthField = document.getElementById('month'); 
+                var yearField = document.getElementById('year');
+				
+				// Instantiate a calendar control, placing it in the 
+                // <div id="calendar"> tag on the page and using 
+                // the currently selected date from the <select> boxes. 
+                // For fun, let's localize the calendar control into Spanish, 
+                // so we pass the text in by means of the strings 
+                // object literal property 
+                var calendar = new Calendar({ 
+                    destinationElement: document.getElementById('calendar'), 
+                    strings: { 
+                        days: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"], 
+                        months: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"], 
+                        previous: "anterior", 
+                        next: "siguiente" 
+                    }, 
+                    selectedDate: (function() { 
+					
+                        // Get the currently selected date from the <select> boxes 
+                        // and pass it to the calendar control as a JavaScript 
+                        // Date object 
+                        var day = dayField.options[dayField.options.selectedIndex].value; 
+                        var month = monthField.options[monthField.options.selectedIndex].value; 
+                        var year = yearField.options[yearField.options.selectedIndex].value; 
+                        return new Date(year, month, day); 
+                    }()) 
+                }); 
+				
+                // Use the Observer pattern nature of the calendar control to listen 
+                // for the DATE_SELECTED event to fire from within the calendar 
+                // control. This event fires when a new date is selected on the 
+                // calendar and passes to any listening function the newly 
+                // selected date as a JavaScript Date object 
+                calendar.listen(calendar.eventType.DATE_SELECTED, function(selectedDate) { 
+				
+                    // Establish the day, month and year from the newly selected 
+                    // date and select the appropriate options in each <select> 
+                    // box on the page. When the HTML form is saved, the 
+                    // selected date will therefore be saved as it now exists 
+                    // within existing HTML form controls 
+                    var day = selectedDate.getDate();
+					
+					var month = selectedDate.getMonth(); 
+                    var year = selectedDate.getFullYear(); 
+                    for (var index = 0, length = dayField.options.length; index < length; index++) { 
+                        if (dayField.options[index].value == day) { 
+                            dayField.options[index].selected = "selected"; 
+                        } 
+                    } 
+                    for (var index = 0, length = monthField.options.length; index < length; index++) { 
+                        if (monthField.options[index].value == month) { 
+                            monthField.options[index].selected = "selected"; 
+                        } 
+                    } 
+                    for (var index = 0, length = yearField.options.length; index < length; index++) { 
+                        if (yearField.options[index].value == year) { 
+                            yearField.options[index].selected = "selected"; 
+                        } 
+                    } 
+                }); 
+				
+                // When the user changes the selected options within the <select> 
+                // boxes, we want to reflect this on the calendar control. To do, 
+                // this we first create a JavaScript Date object based on the newly 
+                // selected form field values, then fire the DATE_SELECTED event 
+                // within the calendar, passing the control the new Date object. 
+                // The display will then be updated by the code within the control 
+                // listening for this event to be fired 
+                function selectDateOnCalendar(e) { 
+                    var day = dayField.options[dayField.options.selectedIndex].value; 
+                    var month = monthField.options[monthField.options.selectedIndex].value; 
+                    var year = yearField.options[yearField.options.selectedIndex].value; 
+                    calendar.fire(calendar.eventType.DATE_SELECTED, new Date(year, month, day)); 
+                } 
+				
+                $.Events.add(dayField, "change", selectDateOnCalendar); 
+                $.Events.add(monthField, "change", selectDateOnCalendar); 
+                $.Events.add(yearField, "change", selectDateOnCalendar); 
+            }); 
+        </script> 
+    </body> 
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<!-- We specify the custom SVG DOCTYPE above to add tag support -->
+
+<!-- First, we define a canvas to draw upon, using the <svg> tag -->
+<svg width="1024" height="768" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Define a gradient - this won’t be displayed yet, just defined. x1 and y1 denote 
+         the position where the gradient will begin and x2 and y2 - denote where the 
+         gradient will end. The colors used and at which points along the gradient they 
+         change are denoted by the <stop> tags within the <linearGradient> tag -->
+    <linearGradient id="gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="200" y2="0">
+        <stop offset="0" stop-color="#000000" />
+        <stop offset="1" stop-color="#cccccc" />
+    </linearGradient>
+
+    <!-- Draw a square, beginning at the location denoted by x and y. Fill its
+         contents with the gradient defined previously, referenced by its id -->
+    <rect x="20" y="20" width="200" height="200" fill="url(#gradient)" />
+
+    <!-- Draw a rectangle at position x, y with rounded corners, whose radius
+         is denoted by the rx and ry attributes. Note the use of the style attribute
+         which applies styles to the element as it would within XHTML -->
+    <rect x="220" y="220" rx="20" ry="20" width="250" height="100" style="fill:#330000;"/>
+
+    <!-- Draw a circle, with the radius denoted by the attribute r. We define a 
+         border around the circle using the stroke and stroke-width attributes -->
+    <circle cx="350" cy="120" r="50" stroke="#336699" stroke-width="25" fill="#003300" />
+
+    <!-- Draw a line from the position x1, y1 to the position x2, y2. You would
+         not actually see the line until you applied a stroke-width border to it,
+         which we do here by means of the style attribute on the <line> tag -->
+    <line x1="20" y1="20" x2="320" y2="320" style="stroke:#cccccc;stroke-width:3"/>
+
+    <!-- Write text on the canvas in a fixed size and color -->
+    <g font-size="50" font-weight="bold" fill="#333333">
+        <text x="200" y="460">Text Example</text>
+    </g>
+</svg>
