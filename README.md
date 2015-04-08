@@ -1,6 +1,7 @@
---------------------------------------------------------------------------
-Pro JavaScript RIA Techniques : Best Practices, Performance, Presentation
-- Den Odell
+# Pro JavaScript RIA Techniques : Best Practices, Performance, Presentation
+
+by Den Odell
+
 ISBN 9781430219347
 
 Source Code Release - Version 1.6
@@ -24,15 +25,8 @@ Updated 3 September 2010 – Version 1.2 Fixes:
 Updated 1 November 2009 – Version 1.1 Fixes:
 - Chapter 11, Listing 11-5, Line 192 should read: text.insertAfter(point);
 
---------------------------------------------------------------------------
+---
 
 The latest version of this code will be available at the following URLs:
-http://www.denodell.com/
 http://www.apress.com/book/view/9781430219347
-
-Working examples can be found online at http://www.denodell.com/
-
-Feel free to ask any questions or send any corrections via those URLs.
-
-Thank you for purchasing my book!
-Den Odell
+https://github.com/denodell/pro-javascript-ria-techniques
